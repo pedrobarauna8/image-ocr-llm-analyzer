@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model OcrResult {
+  id        String  @id @default(uuid())
+  text      String
+  filename  String
+  mimetype  String
+  data      Bytes
+  context   String
+  createdAt DateTime @default(now())
+
+  // Relacionamento com User
+  userId    String
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id        String @id @default(uuid())
+  email     String @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  // Um usuário pode ter vários OcrResults
+  ocrResults OcrResult[]
+}
